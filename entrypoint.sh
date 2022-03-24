@@ -42,4 +42,4 @@ protoc  $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR --go_out=$GO_
     --go-grpc_out=$GO_GRPC_OUTPUT_DIR --go-grpc_opt=paths=source_relative \
 
 # JS
-java -jar openapi-generator-cli.jar generate -i $OPEN_API_SPEC_FILE -g typescript-axios -o $JS_OUTPUT_DIR
+java -jar /root/openapi-generator-cli.jar generate -i $OPEN_API_SPEC_FILE -g typescript-axios -o $JS_OUTPUT_DIR
