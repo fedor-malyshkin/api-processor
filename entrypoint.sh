@@ -1,17 +1,21 @@
-#!/bin/sh
+#!/bin/sh -vlx
 # Test locally:
 # export GITHUB_WORKSPACE=/home/fedor/projects/acquire/video-service-api
-# export PROTO_SPEC_DIR_LOCATION=spec
-# export API_DIR_LOCATION=api
+# export INPUT_PROTO_SPEC_DIR_LOCATION=spec
+# export INPUT_API_DIR_LOCATION=api
 # export ROOT_DIR=/home/fedor/projects/acquire/api-processor
 
+# docker run --rm --env INPUT_PROTO_SPEC_DIR_LOCATION --env INPUT_API_DIR_LOCATION -v /home/fedor/projects/acquire/video-service-api:/wsp  --env GITHUB_WORKSPACE=/wsp b9f63d1c38b0
+# docker run -it --rm --entrypoint="/bin/bash" b9f63d1c38b0
 
-echo $GITHUB_WORKSPACE  # input variables
-echo $PROTO_SPEC_DIR_LOCATION  # input variables
-echo $API_DIR_LOCATION  # input variables
+export PATH=$PATH:/root/go/bin
+
+echo "GITHUB_WORKSPACE:" $GITHUB_WORKSPACE  # input variables
+echo "INPUT_PROTO_SPEC_DIR_LOCATION:" $INPUT_PROTO_SPEC_DIR_LOCATION  # input variables
+echo "INPUT_API_DIR_LOCATION:" $INPUT_API_DIR_LOCATION  # input variables
 
 ROOT_DIR=${ROOT_DIR-'/api-processor'}
-PROTO_SPEC_DIR=$GITHUB_WORKSPACE/$PROTO_SPEC_DIR_LOCATION
+PROTO_SPEC_DIR=$GITHUB_WORKSPACE/$INPUT_PROTO_SPEC_DIR_LOCATION
 PROTO_SPEC_FILE=api.proto  
 ANNOTATION_PROTO_DIR=$ROOT_DIR/protos
 OPEN_API_OUTPUT_DIR=$GITHUB_WORKSPACE/open-api
@@ -34,4 +38,4 @@ protoc  $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR --go_out=$GO_
     --go-grpc_out=$GO_GRPC_OUTPUT_DIR --go-grpc_opt=paths=source_relative \
 
 # JS
-npx @openapitools/openapi-generator-cli generate -i $OPEN_API_SPEC_FILE -g typescript-axios -o $JS_OUTPUT_DIR
+java -jar openapi-generator-cli.jar generate -i $OPEN_API_SPEC_FILE -g typescript-axios -o $JS_OUTPUT_DIR

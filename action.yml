@@ -1,15 +1,16 @@
 # action.yml
 name: 'API Processor'
-description: 'Process Protobuff specification to generate variety endpoints (in Go, JS)'
+description: 'Process Protobuf specification to generate variety endpoints (in Go, JS)'
 inputs:
   github_token:
+    required: true
     description: "GITHUB_TOKEN. Optional if you use checkout@v2 action."
     default: "${{ github.token }}"
-  proto-spec-dir-location:  # id of input
+  proto_spec_dir_location:  # id of input
     description: 'The directory with .proto files'
     required: false
     default: 'specs'
-  api-dir-location:  # id of input
+  api_dir_location:  # id of input
     description: 'The directory with generated API files'
     required: false
     default: 'api'    
