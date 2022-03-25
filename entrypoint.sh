@@ -3,9 +3,10 @@
 # export GITHUB_WORKSPACE=/home/fedor/projects/acquire/video-service-api
 # export INPUT_PROTO_SPEC_DIR_LOCATION=spec
 # export INPUT_API_DIR_LOCATION=api
+# export GITHUB_REPOSITORY=api
 # export ROOT_DIR=/home/fedor/projects/acquire/api-processor
 
-# docker run --rm --env INPUT_PROTO_SPEC_DIR_LOCATION --env INPUT_API_DIR_LOCATION -v /home/fedor/projects/acquire/video-service-api:/wsp  --env GITHUB_WORKSPACE=/wsp b9f63d1c38b0
+# docker run --rm --env INPUT_PROTO_SPEC_DIR_LOCATION --env INPUT_API_DIR_LOCATION -v /home/fedor/projects/acquire/video-service-api:/wsp  --env GITHUB_WORKSPACE=/wsp --env GITHUB_REPOSITORY  b9f63d1c38b0
 # docker run -it --rm --entrypoint="/bin/bash" b9f63d1c38b0
 
 export PATH=$PATH:/root/go/bin
@@ -24,20 +25,47 @@ GO_OUTPUT_DIR=$GITHUB_WORKSPACE/go
 GO_GRPC_OUTPUT_DIR=$GITHUB_WORKSPACE/go-rpc
 JS_OUTPUT_DIR=$GITHUB_WORKSPACE/js-api
 
-ls -al $PROTO_SPEC_DIR
-ls -al $GITHUB_WORKSPACE
-
 rm -r -d -f $OPEN_API_OUTPUT_DIR $GO_OUTPUT_DIR $GO_GRPC_OUTPUT_DIR $JS_OUTPUT_DIR
 mkdir -p $OPEN_API_OUTPUT_DIR $GO_OUTPUT_DIR $GO_GRPC_OUTPUT_DIR $JS_OUTPUT_DIR
 
+root_dir=$PWD
 # Open API
-protoc $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR  --openapi_out=$OPEN_API_OUTPUT_DIR
+cd $root_dir
+if protoc $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR  --openapi_out=$OPEN_API_OUTPUT_DIR; then
+  # do nothing
+  cd $root_dir
+else
+     exit $?
+fi
+
+
 # Go
-protoc $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR --go_out=$GO_OUTPUT_DIR  --go_opt=paths=source_relative
+cd $root_dir
+if protoc $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR --go_out=$GO_OUTPUT_DIR  --go_opt=paths=source_relative; then
+  cd $GO_OUTPUT_DIR
+  go mod init "github.com/"$GITHUB_REPOSITORY"/go"
+  go mod tidy
+else
+     exit $?
+fi
+
 
 #Go RPC
-protoc  $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR --go_out=$GO_GRPC_OUTPUT_DIR --go_opt=paths=source_relative \
-    --go-grpc_out=$GO_GRPC_OUTPUT_DIR --go-grpc_opt=paths=source_relative \
+cd $root_dir
+if protoc  $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR --go_out=$GO_GRPC_OUTPUT_DIR --go_opt=paths=source_relative \
+    --go-grpc_out=$GO_GRPC_OUTPUT_DIR --go-grpc_opt=paths=source_relative; then
+  cd $GO_GRPC_OUTPUT_DIR
+  go mod init "github.com/"$GITHUB_REPOSITORY"/go-rpc"
+  go mod tidy
+else
+     exit $?
+fi
 
 # JS
-java -jar /root/openapi-generator-cli.jar generate -i $OPEN_API_SPEC_FILE -g typescript-axios -o $JS_OUTPUT_DIR
+cd $root_dir
+if java -jar /api-processor/openapi-generator-cli.jar generate -i $OPEN_API_SPEC_FILE -g typescript-axios -o $JS_OUTPUT_DIR; then
+  cd $JS_OUTPUT_DIR
+  # do smth with npm
+else
+     exit $?
+fi

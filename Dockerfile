@@ -13,7 +13,7 @@ go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest  && \
 go install google.golang.org/protobuf/cmd/protoc-gen-go@latest  && \
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
-RUN wget https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/5.3.0/openapi-generator-cli-5.3.0.jar -O /root/openapi-generator-cli.jar
+RUN wget https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/5.3.0/openapi-generator-cli-5.3.0.jar -O /api-processor/openapi-generator-cli.jar
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY entrypoint.sh /entrypoint.sh
