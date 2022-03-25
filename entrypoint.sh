@@ -91,20 +91,26 @@ if [ "$work_with_git" = "true"  ]; then
     cd $root_dir
     version=`$PROCESSOR_DIR/semver.sh bump prerel beta. $version`
     echo $version > $GITHUB_WORKSPACE/VERSION
+    cat $GITHUB_WORKSPACE/VERSION
+    git config user.email "api-processor@example.com"
+    git config user.name "API Processor"
     git add -A
     git commit -a -m "[API Processor] New API for version $version"
     git tag $version
-    git push "${remote_repo}"  --tags
+    git push origin HEAD  --tags "${remote_repo}"
   fi
 
   if [ "$branch" = "master" -o "$branch" = "main"  ] ; then
     cd $root_dir
     version=`$PROCESSOR_DIR/semver.sh bump patch $version`
     echo $version > $GITHUB_WORKSPACE/VERSION
+    cat $GITHUB_WORKSPACE/VERSION
+    git config user.email "api-processor@example.com"
+    git config user.name "API Processor"
     git add -A
     git commit -a -m "[API Processor] New API for version $version"
     git tag $version
-    git push "${remote_repo}"  --tags
+    git push origin HEAD  --tags "${remote_repo}"
   fi
 
 fi
