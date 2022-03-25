@@ -94,10 +94,10 @@ if [ "$work_with_git" = "true"  ]; then
     cat $GITHUB_WORKSPACE/VERSION
     git config user.email "api-processor@example.com"
     git config user.name "API Processor"
-    git add -A
+    git add -A './**'
     git commit -a -m "[API Processor] New API for version $version"
     git tag $version
-    git push origin HEAD  --tags "${remote_repo}"
+    git push --tags --repo="${remote_repo}" origin HEAD
   fi
 
   if [ "$branch" = "master" -o "$branch" = "main"  ] ; then
@@ -107,10 +107,10 @@ if [ "$work_with_git" = "true"  ]; then
     cat $GITHUB_WORKSPACE/VERSION
     git config user.email "api-processor@example.com"
     git config user.name "API Processor"
-    git add -A
+    git add -A './**'
     git commit -a -m "[API Processor] New API for version $version"
     git tag $version
-    git push origin HEAD  --tags "${remote_repo}"
+    git push  --tags --repo="${remote_repo}" origin HEAD
   fi
 
 fi
