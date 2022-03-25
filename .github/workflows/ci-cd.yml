@@ -28,8 +28,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          file: docker/Dockerfile
-          context: build/libs
+          file: Dockerfile-base
           tags: |
             ghcr.io/fedor-malyshkin/api-processor:latest
             ghcr.io/fedor-malyshkin/api-processor:${{steps.get-short-sha-id.outputs.sha}}
