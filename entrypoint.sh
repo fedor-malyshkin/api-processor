@@ -97,9 +97,10 @@ if [ "$branch" = "master" -o "$branch" = "main"  ] ; then
   git commit -a -m "[API Processor] New API for version $version" && \
   git tag $version && \
   git push  --tags --repo="${remote_repo}" origin HEAD && \
-  git checkout  origin develop && \
+  git branch develop refs/remotes/origin/develop  && \
+  git checkout  develop && \
   echo $version > $GITHUB_WORKSPACE/VERSION && \
-  git push  --tags --repo="${remote_repo}" origin HEAD
+  git push --tags --repo="${remote_repo}" origin HEAD
 fi
 
 
