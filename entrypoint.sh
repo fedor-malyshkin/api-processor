@@ -71,48 +71,36 @@ else
      exit $?
 fi
 
-
-cd $root_dir
-work_with_git=true
-# create branche
-if [ "$branch" = "master" -o "$branch" = "main" ] ; then
-  echo "master/main!!!"
-  work_with_git=false
-  cd $root_dir
-fi
-
 version=`cat $GITHUB_WORKSPACE/VERSION`
 REPOSITORY=${INPUT_REPOSITORY:-$GITHUB_REPOSITORY}
 remote_repo="https://${GITHUB_ACTOR}:${INPUT_GITHUB_TOKEN}@github.com/${REPOSITORY}.git"
 
-if [ "$work_with_git" = "true"  ]; then
-
-  if [ "$branch" = "develop"  ] ; then
-    cd $root_dir
-    version=`$PROCESSOR_DIR/semver.sh bump prerel beta. $version`
-    echo $version > $GITHUB_WORKSPACE/VERSION
-    cat $GITHUB_WORKSPACE/VERSION
-    git config user.email "api-processor@example.com"  && \
-    git config user.name "API Processor"  && \
-    git add -A  && \
-    git commit -a -m "[API Processor] New API for version $version"  && \
-    git tag $version  && \
-    git push --tags --repo="${remote_repo}" origin HEAD
-  fi
-
-  if [ "$branch" = "master" -o "$branch" = "main"  ] ; then
-    cd $root_dir
-    version=`$PROCESSOR_DIR/semver.sh bump patch $version`
-    echo $version > $GITHUB_WORKSPACE/VERSION
-    cat $GITHUB_WORKSPACE/VERSION
-    git config user.email "api-processor@example.com"  && \
-    git config user.name "API Processor" && \
-    git add -A && \
-    git commit -a -m "[API Processor] New API for version $version" && \
-    git tag $version && \
-    git push  --tags --repo="${remote_repo}" origin HEAD
-  fi
-
+if [ "$branch" = "develop"  ] ; then
+  cd $root_dir
+  version=`$PROCESSOR_DIR/semver.sh bump prerel beta. $version`
+  echo $version > $GITHUB_WORKSPACE/VERSION
+  git config user.email "api-processor@example.com"  && \
+  git config user.name "API Processor"  && \
+  git add -A  && \
+  git commit -a -m "[API Processor] New API for version $version"  && \
+  git tag $version  && \
+  git push --tags --repo="${remote_repo}" origin HEAD
 fi
+
+if [ "$branch" = "master" -o "$branch" = "main"  ] ; then
+  cd $root_dir
+  version=`$PROCESSOR_DIR/semver.sh bump patch $version`
+  echo $version > $GITHUB_WORKSPACE/VERSION
+  git config user.email "api-processor@example.com"  && \
+  git config user.name "API Processor" && \
+  git add -A && \
+  git commit -a -m "[API Processor] New API for version $version" && \
+  git tag $version && \
+  git push  --tags --repo="${remote_repo}" origin HEAD && \
+  git checkout develop && \
+  echo $version > $GITHUB_WORKSPACE/VERSION && \
+  git push  --tags --repo="${remote_repo}" origin HEAD
+fi
+
 
 exit $?
