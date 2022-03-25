@@ -9,7 +9,7 @@ inputs:
   proto_spec_dir_location:  # id of input
     description: 'The directory with .proto files'
     required: false
-    default: 'specs'
+    default: 'spec'
   api_dir_location:  # id of input
     description: 'The directory with generated API files'
     required: false
