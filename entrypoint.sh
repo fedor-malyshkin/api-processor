@@ -87,7 +87,7 @@ remote_repo="https://${GITHUB_ACTOR}:${INPUT_GITHUB_TOKEN}@github.com/${REPOSITO
 
 if [ "$work_with_git" = "true"  ]; then
 
-  if [ -a "$branch" = "develop"  ] ; then
+  if [ "$branch" = "develop"  ] ; then
     cd $root_dir
     version=`$PROCESSOR_DIR/semver.sh bump prerel beta. $version`
     echo $version > $GITHUB_WORKSPACE/VERSION
