@@ -93,5 +93,5 @@ if [ "$work_with_git" = "true" -a "$branch" = "develop"  ] ; then
   suffix=`git rev-parse --short HEAD`
   version="$version-$suffix"
   git tag $version
-  git push "${remote_repo}" HEAD:${branch} --follow-tags;
+  git push "${remote_repo}"  --tags;
 fi
