@@ -84,17 +84,14 @@ if [ "$branch" = "master" -o "$branch" = "main" ] ; then
   cd $root_dir
 fi
 
+REPOSITORY=${INPUT_REPOSITORY:-$GITHUB_REPOSITORY}
+remote_repo="https://${GITHUB_ACTOR}:${INPUT_GITHUB_TOKEN}@github.com/${REPOSITORY}.git"
+
 if [ "$work_with_git" = "true" -a "$branch" = "develop"  ] ; then
-  REPOSITORY=${INPUT_REPOSITORY:-$GITHUB_REPOSITORY}
-  remote_repo="https://${GITHUB_ACTOR}:${INPUT_GITHUB_TOKEN}@github.com/${REPOSITORY}.git"
-  git push "${remote_repo}" HEAD:${branch} --follow-tags $_FORCE_OPTION $_TAGS;
-  echo "work with git"
-#  sh 'git push --follow-tags origin develop'
-#  // move (merge to) new release to master
-#  "git branch ${RELEASE_VERSION} refs/tags/${RELEASE_VERSION}"
-#  "git checkout ${RELEASE_VERSION}"
-#  'git branch master refs/remotes/origin/master'
-#  'git checkout master'
-#  "git merge --no-commit --ff ${RELEASE_VERSION}"
-#  'git push --follow-tags origin master'
+  cd $root_dir
+
+  suffix=`git rev-parse --short HEAD`
+  version="$version-$suffix"
+  git tag $version
+  git push "${remote_repo}" HEAD:${branch} --follow-tags;
 fi

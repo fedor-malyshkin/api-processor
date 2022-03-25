@@ -2,7 +2,7 @@
 # FROM ubuntu:20.04
 FROM debian:bookworm
 
-RUN apt-get update && apt -y --no-install-recommends install golang-go protobuf-compiler libprotobuf-dev ca-certificates openssl wget curl default-jre
+RUN apt-get update && apt -y --no-install-recommends install golang-go protobuf-compiler libprotobuf-dev ca-certificates openssl wget curl default-jre git
 
 RUN mkdir -p  /api-processor
 COPY protos/ /api-processor/protos/
