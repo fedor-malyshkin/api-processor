@@ -29,7 +29,7 @@ JS_OUTPUT_DIR=$GITHUB_WORKSPACE/js-api
 rm -r -d -f $OPEN_API_OUTPUT_DIR $GO_OUTPUT_DIR $GO_GRPC_OUTPUT_DIR $JS_OUTPUT_DIR
 mkdir -p $OPEN_API_OUTPUT_DIR $GO_OUTPUT_DIR $GO_GRPC_OUTPUT_DIR $JS_OUTPUT_DIR
 
-root_dir=$PWD
+root_dir=$GITHUB_WORKSPACE
 # Open API
 cd $root_dir
 if protoc $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR  --openapi_out=$OPEN_API_OUTPUT_DIR; then
@@ -92,11 +92,11 @@ if [ "$work_with_git" = "true"  ]; then
     version=`$PROCESSOR_DIR/semver.sh bump prerel beta. $version`
     echo $version > $GITHUB_WORKSPACE/VERSION
     cat $GITHUB_WORKSPACE/VERSION
-    git config user.email "api-processor@example.com"
-    git config user.name "API Processor"
-    git add -A './**'
-    git commit -a -m "[API Processor] New API for version $version"
-    git tag $version
+    git config user.email "api-processor@example.com"  && \
+    git config user.name "API Processor"  && \
+    git add -A  && \
+    git commit -a -m "[API Processor] New API for version $version"  && \
+    git tag $version  && \
     git push --tags --repo="${remote_repo}" origin HEAD
   fi
 
@@ -105,12 +105,14 @@ if [ "$work_with_git" = "true"  ]; then
     version=`$PROCESSOR_DIR/semver.sh bump patch $version`
     echo $version > $GITHUB_WORKSPACE/VERSION
     cat $GITHUB_WORKSPACE/VERSION
-    git config user.email "api-processor@example.com"
-    git config user.name "API Processor"
-    git add -A './**'
-    git commit -a -m "[API Processor] New API for version $version"
-    git tag $version
+    git config user.email "api-processor@example.com"  && \
+    git config user.name "API Processor" && \
+    git add -A && \
+    git commit -a -m "[API Processor] New API for version $version" && \
+    git tag $version && \
     git push  --tags --repo="${remote_repo}" origin HEAD
   fi
 
 fi
+
+exit $?
