@@ -10,10 +10,7 @@ inputs:
     description: 'The directory with .proto files'
     required: false
     default: 'spec'
-  api_dir_location:  # id of input
-    description: 'The directory with generated API files'
-    required: false
-    default: 'api'    
+
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -22,4 +19,4 @@ runs:
     - ${{ inputs.api-dir-location }}    
 branding:
   icon: "circle"
-  color: "green"
+  color: "blue"
