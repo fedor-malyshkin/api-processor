@@ -4,9 +4,10 @@
 # export INPUT_PROTO_SPEC_DIR_LOCATION=spec
 # export INPUT_API_DIR_LOCATION=api
 # export GITHUB_REPOSITORY=api
+# export GITHUB_REF=refs/heads/feature-branch-1
 # export ROOT_DIR=/home/fedor/projects/acquire/api-processor
 
-# docker run --rm --env INPUT_PROTO_SPEC_DIR_LOCATION --env INPUT_API_DIR_LOCATION -v /home/fedor/projects/acquire/video-service-api:/wsp  --env GITHUB_WORKSPACE=/wsp --env GITHUB_REPOSITORY  b9f63d1c38b0
+# docker run --rm --env INPUT_PROTO_SPEC_DIR_LOCATION --env INPUT_API_DIR_LOCATION -v /home/fedor/projects/acquire/video-service-api:/wsp  --env GITHUB_WORKSPACE=/wsp --env GITHUB_REPOSITORY --env GITHUB_REF b9f63d1c38b0
 # docker run -it --rm --entrypoint="/bin/bash" b9f63d1c38b0
 
 export PATH=$PATH:/root/go/bin
@@ -15,6 +16,8 @@ echo "GITHUB_WORKSPACE:" $GITHUB_WORKSPACE  # input variables
 echo "INPUT_PROTO_SPEC_DIR_LOCATION:" $INPUT_PROTO_SPEC_DIR_LOCATION  # input variables
 echo "INPUT_API_DIR_LOCATION:" $INPUT_API_DIR_LOCATION  # input variables
 
+
+branch=${GITHUB_REF##*/}
 ROOT_DIR=${ROOT_DIR-'/api-processor'}
 PROTO_SPEC_DIR=$GITHUB_WORKSPACE/$INPUT_PROTO_SPEC_DIR_LOCATION
 PROTO_SPEC_FILE=api.proto
@@ -68,4 +71,30 @@ if java -jar /api-processor/openapi-generator-cli.jar generate -i $OPEN_API_SPEC
   # do smth with npm
 else
      exit $?
+fi
+
+
+cd $root_dir
+version=`cat $GITHUB_WORKSPACE/VERSION`
+work_with_git=true
+# create branche
+if [ "$branch" = "master" -o "$branch" = "main" ] ; then
+  echo "master/main!!!"
+  work_with_git=false
+  cd $root_dir
+fi
+
+if [ "$work_with_git" = "true" -a "$branch" = "develop"  ] ; then
+  REPOSITORY=${INPUT_REPOSITORY:-$GITHUB_REPOSITORY}
+  remote_repo="https://${GITHUB_ACTOR}:${INPUT_GITHUB_TOKEN}@github.com/${REPOSITORY}.git"
+  git push "${remote_repo}" HEAD:${branch} --follow-tags $_FORCE_OPTION $_TAGS;
+  echo "work with git"
+#  sh 'git push --follow-tags origin develop'
+#  // move (merge to) new release to master
+#  "git branch ${RELEASE_VERSION} refs/tags/${RELEASE_VERSION}"
+#  "git checkout ${RELEASE_VERSION}"
+#  'git branch master refs/remotes/origin/master'
+#  'git checkout master'
+#  "git merge --no-commit --ff ${RELEASE_VERSION}"
+#  'git push --follow-tags origin master'
 fi
