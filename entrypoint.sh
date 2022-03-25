@@ -100,6 +100,7 @@ if [ "$branch" = "master" -o "$branch" = "main"  ] ; then
   git fetch origin develop:refs/remotes/origin/develop  && \
   git checkout  develop && \
   echo $version > $GITHUB_WORKSPACE/VERSION && \
+  git commit -a -m "[API Processor] New API for version $version" && \
   git push --tags --repo="${remote_repo}" origin HEAD
 fi
 
