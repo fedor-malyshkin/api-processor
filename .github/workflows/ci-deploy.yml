@@ -1,4 +1,4 @@
-name: deploy-mage
+name: deploy-image
 
 on:
   push:
