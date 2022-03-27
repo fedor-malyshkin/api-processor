@@ -88,6 +88,7 @@ if [ "$branch" = "develop"  ] ; then
   git config user.name "API Processor"  && \
   git add $GO_GRPC_OUTPUT_DIR'/**' && \
   git add $GO_OUTPUT_DIR'/**' && \
+  git add $JS_OUTPUT_DIR'/**' && \
   git commit -a -m "[API Processor] New API for version $version"  && \
   git tag "go/api/v$version"  && \
   git tag "go-rpc/api/v$version"  && \
@@ -102,6 +103,7 @@ if [ "$branch" = "master" -o "$branch" = "main"  ] ; then
   git config user.name "API Processor" && \
   git add $GO_GRPC_OUTPUT_DIR'/**' && \
   git add $GO_OUTPUT_DIR'/**' && \
+  git add $JS_OUTPUT_DIR'/**' && \
   git commit -a -m "[API Processor] New API for version $version" && \
   git tag "go/api/v$version"  && \
   git tag "go-rpc/api/v$version"  && \
