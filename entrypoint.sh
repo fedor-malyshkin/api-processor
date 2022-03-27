@@ -63,15 +63,15 @@ mkdir d
 cd d
 npm install -D @protobuf-ts/plugin
 if npx protoc $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR --ts_out $JS_OUTPUT_DIR; then
-echo ' << EOF
+echo "
 {
-  "name": "${GITHUB_REPOSITORY##*/}",
-  "version": "$version",
-  "description": "",
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
-}'EOF > $JS_OUTPUT_DIR/package.json
+  'name': '${GITHUB_REPOSITORY##*/}',
+  'version': '$version',
+  'description': ',
+  'keywords': [],
+  'author': ',
+  'license': 'ISC'
+}" > $JS_OUTPUT_DIR/package.json
 else
      exit $?
 fi
