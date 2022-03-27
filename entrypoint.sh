@@ -67,9 +67,9 @@ echo "
 {
   \"name\": \"${GITHUB_REPOSITORY##*/}\",
   \"version\": \"$version\",
-  \"description\": \",
+  \"description\": \"\",
   \"keywords\": [],
-  \"author\": \",
+  \"author\": \"\",
   \"license\": \"ISC\"
 }" > $JS_OUTPUT_DIR/package.json
 else
