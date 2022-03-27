@@ -65,7 +65,7 @@ npm install -D @protobuf-ts/plugin
 if npx protoc $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR --ts_out $JS_OUTPUT_DIR; then
 echo "
 {
-  \"name\": \"${GITHUB_REPOSITORY##*/}\",
+  \"name\": \"@fedor-malyshkin/${GITHUB_REPOSITORY##*/}\",
   \"version\": \"$version\",
   \"description\": \"\",
   \"keywords\": [],
