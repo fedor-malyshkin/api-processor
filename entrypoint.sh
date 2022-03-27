@@ -10,7 +10,7 @@
 # docker run --rm --env INPUT_PROTO_SPEC_DIR_LOCATION  -v /home/fedor/projects/acquire/video-service-api:/wsp  --env GITHUB_WORKSPACE=/wsp --env GITHUB_REPOSITORY --env GITHUB_REF b9f63d1c38b0
 # docker run -it --rm --entrypoint="/bin/bash" b9f63d1c38b0
 
-export PATH=$PATH:/root/go/bin
+export PATH=$PATH:/root/go/bin:/usr/bin:/usr/local/bin
 
 echo "GITHUB_WORKSPACE:" $GITHUB_WORKSPACE  # input variables
 echo "INPUT_PROTO_SPEC_DIR_LOCATION:" $INPUT_PROTO_SPEC_DIR_LOCATION  # input variables
