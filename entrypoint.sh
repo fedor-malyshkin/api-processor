@@ -10,7 +10,7 @@
 # docker run --rm --env INPUT_PROTO_SPEC_DIR_LOCATION  -v /home/fedor/projects/acquire/video-service-api:/wsp  --env GITHUB_WORKSPACE=/wsp --env GITHUB_REPOSITORY --env GITHUB_REF b9f63d1c38b0
 # docker run -it --rm --entrypoint="/bin/bash" b9f63d1c38b0
 
-export PATH=$PATH:/root/go/bin:/usr/bin:/usr/local/bin
+export PATH=$PATH:/root/go/bin
 
 echo "GITHUB_WORKSPACE:" $GITHUB_WORKSPACE  # input variables
 echo "INPUT_PROTO_SPEC_DIR_LOCATION:" $INPUT_PROTO_SPEC_DIR_LOCATION  # input variables
@@ -59,6 +59,9 @@ version=`$PROCESSOR_DIR/semver.sh bump prerel beta. $version`
 
 # JS
 cd $root_dir
+mkdir d
+cd d
+npm install -D @protobuf-ts/plugin
 if npx protoc $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR --ts_out $JS_OUTPUT_DIR; then
 echo ' << EOF
 {
