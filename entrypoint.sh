@@ -57,33 +57,24 @@ fi
 version=`cat $GITHUB_WORKSPACE/VERSION`
 version=`$PROCESSOR_DIR/semver.sh bump prerel beta. $version`
 
-# JS
-cd $root_dir
-mkdir d
-cd d
-npm install -D @protobuf-ts/plugin
-if npx protoc $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR --ts_out $JS_OUTPUT_DIR; then
-echo "
-{
-  \"name\": \"@fedor-malyshkin/${GITHUB_REPOSITORY##*/}\",
-  \"version\": \"$version\",
-  \"description\": \"\",
-  \"keywords\": [],
-  \"author\": \"\",
-  \"license\": \"ISC\"
-}" > $JS_OUTPUT_DIR/package.json
-else
-     exit $?
-fi
-
 version=`cat $GITHUB_WORKSPACE/VERSION`
 REPOSITORY=${INPUT_REPOSITORY:-$GITHUB_REPOSITORY}
 remote_repo="https://${GITHUB_ACTOR}:${INPUT_GITHUB_TOKEN}@github.com/${REPOSITORY}.git"
 
-if [ "$branch" = "develop"  ] ; then
+set_version_and_save_to_file() {
+  if [ "$branch" = "master" -o "$branch" = "main"  ] ; then
+    version=`$PROCESSOR_DIR/semver.sh bump patch $version`
+    echo $version > $GITHUB_WORKSPACE/VERSION
+  fi
+  if [ "$branch" = "develop" ] ; then
+    version=`$PROCESSOR_DIR/semver.sh bump prerel beta. $version`
+    echo $version > $GITHUB_WORKSPACE/VERSION
+  fi
+}
+
+commit_and_tag_git()
+{
   cd $root_dir
-  version=`$PROCESSOR_DIR/semver.sh bump prerel beta. $version`
-  echo $version > $GITHUB_WORKSPACE/VERSION
   git config user.email "api-processor@example.com"  && \
   git config user.name "API Processor"  && \
   git add $GO_GRPC_OUTPUT_DIR'/**' && \
@@ -91,23 +82,44 @@ if [ "$branch" = "develop"  ] ; then
   git add $JS_OUTPUT_DIR'/**' && \
   git commit -a -m "[API Processor] New API for version $version"  && \
   git tag "go/api/v$version"  && \
-  git tag "go-rpc/api/v$version"  && \
-  git push --tags --repo="${remote_repo}" origin HEAD
+  git tag "go-rpc/api/v$version"
+}
+
+# !! increment if needed
+set_version_and_save_to_file
+
+
+# JS
+if [ "$branch" = "develop" -o "$branch" = "master" -o "$branch" = "main" ] ; then
+  cd $root_dir
+  rm -r -d -f js-temp
+  mkdir js-temp
+  cd js-temp
+  npm install -D @protobuf-ts/plugin
+  if npx protoc $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR --ts_out $JS_OUTPUT_DIR; then
+    echo "
+    {
+      \"name\": \"@fedor-malyshkin/${GITHUB_REPOSITORY##*/}\",
+      \"version\": \"$version\",
+      \"description\": \"\",
+      \"keywords\": [],
+      \"author\": \"\",
+      \"license\": \"ISC\"
+    }" > $JS_OUTPUT_DIR/package.json
+  else
+       exit $?
+  fi
 fi
 
+if [ "$branch" = "develop" -o "$branch" = "master" -o "$branch" = "main" ] ; then
+  cd $root_dir
+  commit_and_tag_git
+  git push  --tags --repo="${remote_repo}" origin HEAD
+fi
+
+# update VERSION in develop
 if [ "$branch" = "master" -o "$branch" = "main"  ] ; then
   cd $root_dir
-  version=`$PROCESSOR_DIR/semver.sh bump patch $version`
-  echo $version > $GITHUB_WORKSPACE/VERSION
-  git config user.email "api-processor@example.com"  && \
-  git config user.name "API Processor" && \
-  git add $GO_GRPC_OUTPUT_DIR'/**' && \
-  git add $GO_OUTPUT_DIR'/**' && \
-  git add $JS_OUTPUT_DIR'/**' && \
-  git commit -a -m "[API Processor] New API for version $version" && \
-  git tag "go/api/v$version"  && \
-  git tag "go-rpc/api/v$version"  && \
-  git push  --tags --repo="${remote_repo}" origin HEAD && \
   git clean -d -f && \
   git fetch origin develop:refs/remotes/origin/develop  && \
   git checkout  develop && \
@@ -115,6 +127,5 @@ if [ "$branch" = "master" -o "$branch" = "main"  ] ; then
   git commit -a -m "[API Processor] New API for version $version" && \
   git push --tags --repo="${remote_repo}" origin HEAD
 fi
-
 
 exit $?
