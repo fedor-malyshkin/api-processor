@@ -1,5 +1,5 @@
 # Container image that runs your code
-FROM ghcr.io/acquireio/api-processor:latest
+FROM ghcr.io/fedor-malyshkin/api-processor:latest
 
 RUN mkdir -p  /api-processor
 COPY protos/ /api-processor/protos/
