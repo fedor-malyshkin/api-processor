@@ -55,7 +55,6 @@ fi
 
 
 version=`cat $GITHUB_WORKSPACE/VERSION`
-version=`$PROCESSOR_DIR/semver.sh bump prerel beta. $version`
 
 version=`cat $GITHUB_WORKSPACE/VERSION`
 REPOSITORY=${INPUT_REPOSITORY:-$GITHUB_REPOSITORY}
@@ -67,7 +66,7 @@ set_version_and_save_to_file() {
     echo $version > $GITHUB_WORKSPACE/VERSION
   fi
   if [ "$branch" = "develop" ] ; then
-    version=`$PROCESSOR_DIR/semver.sh bump prerel beta. $version`
+    version=`$PROCESSOR_DIR/semver.sh bump prerel dev. $version`
     echo $version > $GITHUB_WORKSPACE/VERSION
   fi
 }
@@ -96,16 +95,11 @@ if [ "$branch" = "develop" -o "$branch" = "master" -o "$branch" = "main" ] ; the
   mkdir js-temp
   cd js-temp
   npm install -D @protobuf-ts/plugin
-  if npx protoc $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR --ts_out $JS_OUTPUT_DIR; then
-    echo "
-    {
-      \"name\": \"@fedor-malyshkin/${GITHUB_REPOSITORY##*/}\",
-      \"version\": \"$version\",
-      \"description\": \"\",
-      \"keywords\": [],
-      \"author\": \"\",
-      \"license\": \"ISC\"
-    }" > $JS_OUTPUT_DIR/package.json
+  if npx protoc $PROTO_SPEC_FILE -I$PROTO_SPEC_DIR -I$ANNOTATION_PROTO_DIR  --ts_opt generate_dependencies --ts_out $JS_OUTPUT_DIR; then
+    cp $PROCESSOR_DIR/js/*  $JS_OUTPUT_DIR
+    sed -i "s/##NAME##/@fedor-malyshkin/${GITHUB_REPOSITORY##*/}/" $JS_OUTPUT_DIR/package.json
+    sed -i "s/##VERSION##/$version/" $JS_OUTPUT_DIR/package.json
+    npm install && npm run-script build
   else
        exit $?
   fi
