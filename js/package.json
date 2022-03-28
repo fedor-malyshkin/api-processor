@@ -1,0 +1,27 @@
+{
+  "name": "##NAME##",
+  "version": "##VERSION##",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "main": "lib/cjs/index",
+  "module": "lib/esnext/index.js",
+  "jsnext:main": "lib/esnext/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/**"
+  ],
+  "devDependencies": {
+    "esbuild": "^0.14.28",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.6.2"
+  },
+  "dependencies": {
+    "@protobuf-ts/runtime-rpc": "^2.4.0"
+  },
+  "scripts": {
+    "ts-types": "npx tsc",
+    "build": "rimraf lib && node ./esbuild.js && npm run ts-types"
+  }
+}
