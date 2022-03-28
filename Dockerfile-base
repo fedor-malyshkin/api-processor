@@ -7,9 +7,6 @@ RUN apt-get update && apt -y --no-install-recommends install golang-go protobuf-
 RUN mkdir -p  /api-processor
 COPY protos/ /api-processor/protos/
 
-# install npm packages
-RUN npm install @protobuf-ts/plugin -g
-
 # install go modules
 RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest  && \
 go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest  && \
