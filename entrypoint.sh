@@ -1,4 +1,4 @@
-#!/bin/sh -vlx
+#!/bin/sh -l
 # Test locally:
 # export GITHUB_WORKSPACE=/home/fedor/projects/acquire/video-service-api
 # export INPUT_PROTO_SPEC_DIR_LOCATION=spec
@@ -99,7 +99,9 @@ if [ "$branch" = "develop" -o "$branch" = "master" -o "$branch" = "main" ] ; the
     cp $PROCESSOR_DIR/js/*  $JS_OUTPUT_DIR     && \
     sed -i "s/##NAME##/@fedor-malyshkin\/${GITHUB_REPOSITORY##*/}/" $JS_OUTPUT_DIR/package.json    && \
     sed -i "s/##VERSION##/$version/" $JS_OUTPUT_DIR/package.json    && \
-    npm install && npm run-script build
+    cd $JS_OUTPUT_DIR && \
+    npm install && \
+    npm run-script build
   else
        exit $?
   fi
